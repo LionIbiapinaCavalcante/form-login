@@ -1,52 +1,82 @@
-const form = document.querySelector("#form"),
-  username = document.querySelector("#username"),
-  email = document.querySelector("#email"),
-  password = document.querySelector("#password"),
-  passwordConfirmation = document.querySelector("#password-confirmation");
-form.addEventListener("submit", (a) => {
-  a.preventDefault(), checkInputs();
+const form = document.getElementById("form");
+const username = document.getElementById("username");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const passwordConfirmation = document.getElementById("password-confirmation");
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  checkInputs();
 });
+
 function checkInputs() {
-  const a = username.value,
-    b = email.value,
-    c = password.value,
-    d = passwordConfirmation.value;
-  "" === a
-    ? setErrorFor(username, "O nome de usu\xE1rio \xE9 obrigat\xF3rio.")
-    : setSuccessFor(username),
-    "" === b
-      ? setErrorFor(email, "O email \xE9 obrigat\xF3rio.")
-      : checkEmail(b)
-      ? setSuccessFor(email)
-      : setErrorFor(email, "Por favor, insira um email v\xE1lido."),
-    "" === c
-      ? setErrorFor(password, "A senha \xE9 obrigat\xF3ria.")
-      : 7 > c.length
-      ? setErrorFor(password, "A senha precisa ter no m\xEDnimo 7 caracteres.")
-      : setSuccessFor(password),
-    "" === d
-      ? setErrorFor(
-          passwordConfirmation,
-          "A confirma\xE7\xE3o de senha \xE9 obrigat\xF3ria."
-        )
-      : d === c
-      ? setSuccessFor(passwordConfirmation)
-      : setErrorFor(passwordConfirmation, "As senhas n\xE3o conferem.");
-  const e = form.querySelectorAll(".form-control"),
-    f = [...e].every((a) => "form-control success" === a.className);
-  f && alert("Conta criada com sucesso!");
+  const usernameValue = username.value;
+  const emailValue = email.value;
+  const passwordValue = password.value;
+  const passwordConfirmationValue = passwordConfirmation.value;
+
+  if (usernameValue === "") {
+    setErrorFor(username, "O nome de usuário é obrigatório.");
+  } else {
+    setSuccessFor(username);
+  }
+
+  if (emailValue === "") {
+    setErrorFor(email, "O email é obrigatório.");
+  } else if (!checkEmail(emailValue)) {
+    setErrorFor(email, "Por favor, insira um email válido.");
+  } else {
+    setSuccessFor(email);
+  }
+
+  if (passwordValue === "") {
+    setErrorFor(password, "A senha é obrigatória.");
+  } else if (passwordValue.length < 7) {
+    setErrorFor(password, "A senha precisa ter no mínimo 7 caracteres.");
+  } else {
+    setSuccessFor(password);
+  }
+
+  if (passwordConfirmationValue === "") {
+    setErrorFor(passwordConfirmation, "A confirmação de senha é obrigatória.");
+  } else if (passwordConfirmationValue !== passwordValue) {
+    setErrorFor(passwordConfirmation, "As senhas não conferem.");
+  } else {
+    setSuccessFor(passwordConfirmation);
+  }
+
+  const formControls = form.querySelectorAll(".form-control");
+
+  const formIsValid = [...formControls].every((formControl) => {
+    return formControl.className === "form-control success";
+  });
+
+  if (formIsValid) {
+    alert("Conta criada com sucesso!");
+  }
 }
-function setErrorFor(a, b) {
-  const c = a.parentElement,
-    d = c.querySelector("small");
-  (d.innerText = b), (c.className = "form-control error");
+
+function setErrorFor(input, message) {
+  const formControl = input.parentElement;
+  const small = formControl.querySelector("small");
+
+  // Adiciona a mensagem de erro
+  small.innerText = message;
+
+  // Adiciona a classe de erro
+  formControl.className = "form-control error";
 }
-function setSuccessFor(a) {
-  const b = a.parentElement;
-  b.className = "form-control success";
+
+function setSuccessFor(input) {
+  const formControl = input.parentElement;
+
+  // Adicionar a classe de sucesso
+  formControl.className = "form-control success";
 }
-function checkEmail(a) {
+
+function checkEmail(email) {
   return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-    a
+    email
   );
 }
